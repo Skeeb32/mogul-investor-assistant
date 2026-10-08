@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f5f1" />
+    <meta name="description" content="Mogul — a clearer way to invest in residential real estate." />
+    <title>Mogul — Your portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#overview" aria-label="Mogul home"><span class="brand-mark">m</span><span>mogul</span></a>
+        <div class="workspace-label">INVESTOR PORTAL</div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a class="nav-link active" href="#overview" data-view="overview"><span class="nav-icon">◫</span>Overview</a>
+          <a class="nav-link" href="#properties" data-view="properties"><span class="nav-icon">⌂</span>Properties<span class="nav-count">04</span></a>
+          <a class="nav-link" href="#portfolio" data-view="portfolio"><span class="nav-icon">▥</span>My portfolio</a>
+          <a class="nav-link" href="#activity" data-view="activity"><span class="nav-icon">↗</span>Activity</a>
+          <div class="nav-divider"></div>
+          <div class="workspace-label muted">YOUR ACCOUNT</div>
+          <a class="nav-link" href="#documents" data-view="documents"><span class="nav-icon">▤</span>Documents</a>
+          <a class="nav-link" href="#settings" data-view="settings"><span class="nav-icon">⚙</span>Settings</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="help-card"><span class="help-dot"></span><div><b>Here when you need us</b><small>Talk to an investment specialist</small></div><span class="help-arrow">↗</span></div>
+          <button class="profile-button" type="button"><span class="avatar">SC</span><span class="profile-copy"><b>Sarah Chen</b><small>Individual account</small></span><span class="profile-more">···</span></button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="mobile-menu" id="menu-toggle" aria-label="Open navigation">☰</button>
+          <div class="breadcrumbs"><span>Investor portal</span><span class="crumb-slash">/</span><b id="crumb-current">Overview</b></div>
+          <div class="top-actions"><span class="market-status"><i></i> Markets open</span><button class="icon-button" aria-label="Notifications"><span>♧</span><i class="notification-dot"></i></button><span class="top-avatar">SC</span></div>
+        </header>
+
+        <div class="page-wrap">
+          <section class="welcome-row">
+            <div><div class="eyebrow">WEDNESDAY, OCTOBER 8, 2026 <span class="eyebrow-line"></span> YOUR MONEY, AT WORK</div><h1>Good morning, Sarah<span class="period">.</span></h1><p class="welcome-sub">A clear view of the homes you own and what comes next.</p></div>
+            <button class="button button-dark" id="explore-top"><span>Explore properties</span><span class="button-arrow">↗</span></button>
+          </section>
+
+          <section class="metrics-grid" aria-label="Portfolio summary">
+            <article class="metric-card primary-metric"><div class="metric-heading">Total portfolio value <button class="info-button" aria-label="Portfolio value information">i</button></div><div class="metric-value">$84,250<span class="metric-change">↗ 8.4%</span></div><div class="metric-foot"><span>Across 3 properties</span><span>vs. $77,730 invested</span></div><div class="sparkline" aria-label="Portfolio value trend"><svg viewBox="0 0 260 44" preserveAspectRatio="none"><path d="M0 35 C20 35 21 29 38 31 S61 26 76 30 S94 20 112 23 S133 12 151 18 S175 8 191 13 S211 4 228 8 S247 2 260 4" fill="none" stroke="#85a789" stroke-width="2"/><path d="M0 35 C20 35 21 29 38 31 S61 26 76 30 S94 20 112 23 S133 12 151 18 S175 8 191 13 S211 4 228 8 S247 2 260 4 L260 44 L0 44Z" fill="url(#shade)" opacity=".35"/><defs><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#85a789"/><stop offset="1" stop-color="#85a789" stop-opacity="0"/></linearGradient></defs></svg></div></article>
+            <article class="metric-card"><div class="metric-heading">Distributions received <span class="metric-period">YEAR TO DATE</span></div><div class="metric-value">$2,418<span class="metric-change">↗ 12.6%</span></div><div class="metric-foot"><span>4 quarterly payments</span><span>Next: Dec 15</span></div><div class="metric-bars" aria-label="Quarterly distributions"><i style="height:35%"></i><i style="height:48%"></i><i style="height:44%"></i><i style="height:58%"></i><i style="height:67%"></i><i style="height:57%"></i><i style="height:79%"></i><i style="height:74%"></i><i style="height:100%"></i></div></article>
+            <article class="metric-card"><div class="metric-heading">Active investments <span class="metric-period">ACROSS 2 MARKETS</span></div><div class="metric-value">3<span class="metric-change neutral">properties</span></div><div class="market-tags"><span>New York <b>2</b></span><span>Atlanta <b>1</b></span></div><div class="occupancy"><span>Portfolio occupancy</span><b>96.8%</b><div class="progress-track"><i></i></div></div></article>
+          </section>
+
+          <section class="content-grid">
+            <div class="left-column">
+              <div class="section-heading"><div><div class="eyebrow">HANDPICKED FOR YOU</div><h2>Open investments <span class="section-count">02</span></h2></div><button class="text-button" id="see-all">View all properties <span>→</span></button></div>
+              <div class="property-list" id="property-list">
+                <article class="property-card" data-market="New York" data-type="Multifamily">
+                  <div class="property-image image-brooklyn"><div class="image-overlay"></div><span class="status-pill"><i></i> OPEN</span><span class="image-caption">BROOKLYN, NEW YORK</span><button class="save-button" aria-label="Save Brooklyn property">♡</button></div>
+                  <div class="property-body"><div class="property-title-row"><div><h3>Clinton Hill Collection</h3><p>12-unit brownstone portfolio</p></div><span class="property-type">MULTIFAMILY</span></div><div class="property-stats"><div><small>Target annual return</small><b>10.2%</b></div><div><small>Minimum investment</small><b>$5,000</b></div><div><small>Funding progress</small><b>68% <span class="progress-inline"><i style="width:68%"></i></span></b></div></div><div class="property-footer"><span><b>32 days</b> left to invest</span><button class="button button-outline invest-button" data-property="Clinton Hill Collection">View opportunity <span>↗</span></button></div></div>
+                </article>
+                <article class="property-card" data-market="Atlanta" data-type="Single family">
+                  <div class="property-image image-atlanta"><div class="image-overlay"></div><span class="status-pill"><i></i> OPEN</span><span class="image-caption">ATLANTA, GEORGIA</span><button class="save-button" aria-label="Save Atlanta property">♡</button></div>
+                  <div class="property-body"><div class="property-title-row"><div><h3>Westside Garden Homes</h3><p>8 renovated single-family homes</p></div><span class="property-type">SINGLE FAMILY</span></div><div class="property-stats"><div><small>Target annual return</small><b>9.6%</b></div><div><small>Minimum investment</small><b>$2,500</b></div><div><small>Funding progress</small><b>41% <span class="progress-inline"><i style="width:41%"></i></span></b></div></div><div class="property-footer"><span><b>46 days</b> left to invest</span><button class="button button-outline invest-button" data-property="Westside Garden Homes">View opportunity <span>↗</span></button></div></div>
+                </article>
+              </div>
+              <div class="empty-state" id="empty-state" hidden><span>⌂</span><b>No properties match those filters.</b><button id="clear-filters">Clear filters</button></div>
+            </div>
+
+            <aside class="right-column">
+              <section class="portfolio-panel"><div class="panel-heading"><div><div class="eyebrow">YOUR PERFORMANCE</div><h2>Portfolio value</h2></div><button class="period-select" id="chart-period">1Y <span>⌄</span></button></div><div class="chart-total"><b>$84,250</b><span>+$6,520 <i>(8.4%)</i></span></div><div class="chart-wrap"><div class="chart-y-labels"><span>$90k</span><span>$80k</span><span>$70k</span><span>$60k</span></div><svg class="portfolio-chart" viewBox="0 0 400 150" preserveAspectRatio="none" role="img" aria-label="Portfolio value chart, trending upward over one year"><defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#96b49a" stop-opacity=".28"/><stop offset="1" stop-color="#96b49a" stop-opacity="0"/></linearGradient></defs><path class="chart-area" d="M0 124 C24 120 26 108 52 112 S82 101 104 104 S130 91 154 96 S180 76 205 82 S231 64 254 69 S279 53 300 58 S324 36 347 43 S371 20 400 16 L400 150 L0 150Z"/><path class="chart-line" d="M0 124 C24 120 26 108 52 112 S82 101 104 104 S130 91 154 96 S180 76 205 82 S231 64 254 69 S279 53 300 58 S324 36 347 43 S371 20 400 16"/><circle cx="400" cy="16" r="4" class="chart-point"/></svg></div><div class="chart-months"><span>OCT</span><span>DEC</span><span>FEB</span><span>APR</span><span>JUN</span><span>AUG</span><span>OCT</span></div><div class="chart-legend"><span><i></i> Portfolio value</span><span><i class="legend-invested"></i> Amount invested</span></div><div class="panel-divider"></div><div class="mini-metrics"><div><span>Total invested</span><b>$77,730</b></div><div><span>Unrealized growth</span><b class="growth">+$6,520</b></div></div></section>
+
+              <section class="activity-panel"><div class="panel-heading"><div><div class="eyebrow">RECENT UPDATES</div><h2>Activity</h2></div><button class="more-button" aria-label="More activity options">···</button></div><div class="activity-item"><span class="activity-icon distribution">↓</span><div><b>Distribution received</b><p>Clinton Hill Collection · Q3</p><small>Sep 30, 2026</small></div><strong>+$612.00</strong></div><div class="activity-item"><span class="activity-icon report">▤</span><div><b>Quarterly report ready</b><p>Westside Garden Homes</p><small>Sep 22, 2026</small></div><button aria-label="Open quarterly report">↗</button></div><div class="activity-item"><span class="activity-icon distribution">↓</span><div><b>Distribution received</b><p>Park Slope Townhomes · Q3</p><small>Sep 15, 2026</small></div><strong>+$804.50</strong></div><button class="activity-link" id="activity-link">See all activity <span>→</span></button></section>
+            </aside>
+          </section>
+
+          <section class="insight-strip"><span class="insight-mark">✳</span><div><small>THE MOGUL NOTE</small><b>Real estate investing, made more transparent.</b><p>Every property comes with clear reporting, quarterly updates, and a team that knows the neighborhood.</p></div><button class="text-button" id="learn-more">How it works <span>↗</span></button></section>
+          <footer class="footer"><span>© 2026 Mogul. Built for a more open real estate market.</span><div><a href="#privacy">Privacy</a><a href="#terms">Disclosures</a><span class="demo-note">DEMO EXPERIENCE · SAMPLE DATA</span></div></footer>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="invest-dialog" id="invest-dialog" aria-labelledby="dialog-title"><button class="dialog-close" id="dialog-close" aria-label="Close dialog">×</button><div class="eyebrow">INVESTMENT OPPORTUNITY</div><h2 id="dialog-title">Clinton Hill Collection</h2><p class="dialog-location">Brooklyn, New York · Multifamily</p><div class="dialog-summary"><div><small>Target annual return</small><b>10.2%</b></div><div><small>Minimum investment</small><b>$5,000</b></div></div><p class="dialog-copy">A curated collection of historic Brooklyn brownstones, thoughtfully renovated for long-term rental demand. Review the offering details and property reports before investing.</p><button class="button button-dark dialog-action" id="dialog-action">Request offering details <span>↗</span></button><small class="disclosure">Sample opportunity for demonstration only. No investment can be made through this prototype.</small></dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>

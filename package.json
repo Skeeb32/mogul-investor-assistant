@@ -1,0 +1,10 @@
+{
+  "name": "mogul-investor-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A responsive investor portal prototype for residential real estate investing.",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  }
+}
