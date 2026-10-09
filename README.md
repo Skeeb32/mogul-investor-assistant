@@ -40,6 +40,8 @@ Chat and sample account pages can run without an OpenAI key; AI answers and voic
 
 5. Start the app with `npm run dev` and sign in at `/sign-in` using the values in `DEMO_USER_EMAIL` and `DEMO_USER_PASSWORD`.
 
+The seed creates two fictional accounts for tenant-isolation checks. A second investor can sign in with `DEMO_SECOND_USER_EMAIL` and `DEMO_SECOND_USER_PASSWORD`. Use different, unique passwords for both accounts; production-mode seeding rejects the example passwords.
+
 Never use the example password or synthetic records in a public deployment. The seed command refuses the example password when `NODE_ENV=production`.
 
 ## Docker Compose
@@ -71,7 +73,8 @@ Open `http://localhost:3000`. The Compose database credentials are for local dev
 | `OPENAI_RERANK_MODEL` | Retrieval reranker, defaults to `gpt-4.1-mini` |
 | `OPENAI_TTS_MODEL` / `OPENAI_TTS_VOICE` | Hosted speech output model and voice |
 | `DEMO_MODE` | Must be `true` to seed synthetic fixtures |
-| `DEMO_USER_EMAIL` / `DEMO_USER_PASSWORD` | Demo sign-in credentials; set a unique password of at least 14 characters |
+| `DEMO_USER_EMAIL` / `DEMO_USER_PASSWORD` | Admin demo sign-in credentials; set a unique password of at least 14 characters |
+| `DEMO_SECOND_USER_EMAIL` / `DEMO_SECOND_USER_PASSWORD` | Separate investor account for tenant-isolation checks; set a different unique password of at least 14 characters |
 | `MAX_UPLOAD_MB` | Maximum document file size, capped at 4 MB for Vercel function payload limits |
 | `CHAT_RATE_LIMIT_PER_MINUTE` | Per-user chat requests per minute |
 
@@ -95,6 +98,10 @@ Optional flags are `--property <property-uuid>`, `--date YYYY-MM-DD`, and `--url
 4. For browser speech recognition, use a supported browser and a secure origin. Hosted speech playback is provided by OpenAI.
 
 Vercel functions have deployment-specific execution and request limits. Confirm your plan's limits against document ingestion and database connection settings; use a background worker for larger ingestion workloads.
+
+## Preview smoke test
+
+Follow [`docs/live-preview-checklist.md`](docs/live-preview-checklist.md) to configure an isolated Vercel Preview environment and verify both seeded accounts before sharing the preview URL.
 
 ## Security and operating limits
 
