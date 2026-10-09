@@ -1,10 +1,55 @@
 {
-  "name": "mogul-investor-portal",
+  "name": "mogul-investor-assistant",
   "version": "1.0.0",
   "private": true,
-  "description": "A responsive investor portal prototype for residential real estate investing.",
+  "description": "A tenant-isolated real-estate investor assistant with RAG, authenticated portfolio tools, and voice.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "ingest": "tsx scripts/ingest.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.91",
+    "@ai-sdk/react": "^4.0.139",
+    "@radix-ui/react-dialog": "^1.2.0",
+    "ai": "^7.0.136",
+    "bcryptjs": "^3.0.3",
+    "cheerio": "^1.2.0",
+    "csv-parse": "^7.0.3",
+    "drizzle-orm": "^0.45.4",
+    "lucide-react": "^1.54.0",
+    "mammoth": "^1.13.0",
+    "next": "^16.4.0",
+    "next-auth": "5.0.0-beta.32",
+    "openai": "^7.31.0",
+    "pdf-parse": "^2.4.5",
+    "postgres": "^3.4.9",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.4.0",
+    "drizzle-kit": "^0.31.10",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3"
   }
 }

@@ -1,29 +1,119 @@
-# Mogul investor portal
+# Mogul Investor Assistant
 
-A responsive front-end prototype for a residential real estate investing platform. It presents a portfolio overview, sample investment opportunities, property metrics, portfolio performance, and recent account activity.
+A demo-first real estate investor assistant with an authenticated portfolio dashboard, document-grounded chat, account tools, and voice output. Sample records and documents are fictional and clearly labeled. This is a starter application for evaluation; connect it to verified business data and complete a deployment review before using it with investor records.
 
-## Run locally
+## What it includes
 
-Requires Node.js 18 or newer. No package installation is needed.
+- Next.js App Router, TypeScript, and a responsive dashboard/chat workspace
+- Auth.js credentials sign-in with bcrypt password hashes and JWT sessions
+- PostgreSQL with pgvector, Drizzle ORM, tenant scoped row-level security, audit records, and database-backed rate limits
+- OpenAI chat, embeddings, retrieval and reranking, plus hosted text-to-speech
+- Browser speech recognition for voice input where the browser supports it
+- PDF, DOCX, HTML, CSV, and plain-text document ingestion
+- Synthetic Brooklyn and Atlanta sample holdings and source documents
+- Docker Compose for a local PostgreSQL and app setup
+
+## Requirements
+
+- Node.js 22.13 or newer and npm
+- PostgreSQL 17 with the pgvector extension, or Docker Compose
+- An OpenAI API key for chat, embeddings, reranking, and hosted speech output
+
+Chat and sample account pages can run without an OpenAI key; AI answers and voice output require one. Document indexing works without a key using full-text search only, but the demo seed skips embeddings without a key.
+
+## Local setup
+
+1. Copy `.env.example` to `.env.local`.
+2. Set `AUTH_SECRET` to a fresh secret, `DATABASE_URL` to your Postgres connection, and `OPENAI_API_KEY` to your key.
+3. Install packages and apply the database schema:
+
+   ```sh
+   npm install
+   npm run db:migrate
+   ```
+
+4. Choose a unique `DEMO_USER_PASSWORD` with at least 14 characters. Keep `DEMO_MODE=true` only for a demo environment, then seed the fictional account:
+
+   ```sh
+   npm run db:seed
+   ```
+
+5. Start the app with `npm run dev` and sign in at `/sign-in` using the values in `DEMO_USER_EMAIL` and `DEMO_USER_PASSWORD`.
+
+Never use the example password or synthetic records in a public deployment. The seed command refuses the example password when `NODE_ENV=production`.
+
+## Docker Compose
+
+Copy `.env.example` to `.env`, set a new `AUTH_SECRET`, `DEMO_USER_PASSWORD`, and `OPENAI_API_KEY`, then run:
 
 ```sh
-npm run dev
+docker compose up --build
 ```
 
-Then open [http://localhost:4173](http://localhost:4173).
+The database initializes from `drizzle/0001_initial.sql`. In another terminal, seed the sample account:
 
-## What is included
+```sh
+docker compose exec app npm run db:seed
+```
 
-- Responsive investor dashboard with a mobile navigation drawer
-- Sample portfolio and property offering cards
-- Save-property interactions and an offering details dialog
-- Portfolio performance visualization and recent activity
-- A small static server using Node's built-in modules
+Open `http://localhost:3000`. The Compose database credentials are for local development only. Use managed secrets and a managed Postgres/pgvector service for hosted environments.
 
-## Prototype data
+## Environment variables
 
-All account figures, property names, performance values, offering terms, and account activity are illustrative sample data. The prototype does not connect to an account, financial data provider, investment offering, or payment service. Property imagery is loaded from Unsplash and the typefaces are loaded from Google Fonts.
+| Variable | Purpose |
+| --- | --- |
+| `AUTH_SECRET` | Secret used to sign Auth.js sessions; generate a unique value for each environment |
+| `AUTH_TRUST_HOST` | Set to `true` when running behind a trusted proxy such as Vercel |
+| `DATABASE_URL` | PostgreSQL connection URL with pgvector enabled |
+| `OPENAI_API_KEY` | Enables model, embedding, reranking, and hosted speech calls |
+| `OPENAI_CHAT_MODEL` | Chat model, defaults to `gpt-4.1-mini` |
+| `OPENAI_EMBEDDING_MODEL` | Embedding model, defaults to `text-embedding-3-small` (1536 dimensions) |
+| `OPENAI_RERANK_MODEL` | Retrieval reranker, defaults to `gpt-4.1-mini` |
+| `OPENAI_TTS_MODEL` / `OPENAI_TTS_VOICE` | Hosted speech output model and voice |
+| `DEMO_MODE` | Must be `true` to seed synthetic fixtures |
+| `DEMO_USER_EMAIL` / `DEMO_USER_PASSWORD` | Demo sign-in credentials; set a unique password of at least 14 characters |
+| `MAX_UPLOAD_MB` | Maximum document file size, capped at 4 MB for Vercel function payload limits |
+| `CHAT_RATE_LIMIT_PER_MINUTE` | Per-user chat requests per minute |
 
-## Product direction
+## Documents
 
-The interface is based on the supplied Mogul role brief and emphasizes investor transparency, clear property information, portfolio reporting, and operational simplicity. It is a product concept rather than an official Mogul product or investment recommendation.
+Analyst and admin users can upload supported documents from the app. Ingestion extracts text, splits it into chunks, generates embeddings when configured, and stores source metadata. Retrieval combines PostgreSQL full-text search and vector similarity, then reranks candidate passages. The assistant treats retrieved documents as evidence, not instructions, and returns citations. The app caps uploads at 4 MB to fit Vercel Functions' 4.5 MB request payload limit; larger files need a direct-to-object-storage upload flow.
+
+To index a local file from the command line:
+
+```sh
+npm run ingest -- --file ./path/to/report.pdf --title "Q3 report" --source-type market_report
+```
+
+Optional flags are `--property <property-uuid>`, `--date YYYY-MM-DD`, and `--url https://...`. The account user must already exist and have the analyst or admin role. Use HTTPS source links.
+
+## Vercel deployment
+
+1. Provision PostgreSQL with pgvector and apply `drizzle/0001_initial.sql` (or run `npm run db:migrate` from a trusted release environment). Use a pooled connection string for the serverless runtime where your provider offers one.
+2. Import the repository into Vercel and configure the environment variables above. Set a unique `AUTH_SECRET`, production database URL, and OpenAI key. Set `DEMO_MODE=false` after deciding whether you want synthetic data.
+3. Deploy. Provision real user accounts through a controlled administrative process; public self-signup and password recovery are not implemented.
+4. For browser speech recognition, use a supported browser and a secure origin. Hosted speech playback is provided by OpenAI.
+
+Vercel functions have deployment-specific execution and request limits. Confirm your plan's limits against document ingestion and database connection settings; use a background worker for larger ingestion workloads.
+
+## Security and operating limits
+
+- Authenticated identity determines account and user scope; model tool inputs cannot choose a user ID.
+- Row-level security uses transaction-local identity settings. The runtime database role must not own protected tables or have `BYPASSRLS`; use a separate privileged migration role.
+- Document uploads are restricted by role, file type, size, and same-origin checks. URL inputs must use HTTPS.
+- Chat, speech, document changes, and sensitive tool actions are rate limited or audited.
+- Demo data is fictional. There is no live Mogul platform integration, real-time property feed, payment flow, multi-factor authentication, account recovery, or user self-registration.
+- Add monitoring, backups, secret rotation, account provisioning, retention rules, abuse controls, and a security review before production use.
+
+## Quality checks
+
+```sh
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
+
+## License
+
+No license has been selected yet. Choose one before accepting outside contributions or reuse.

@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: mogul
+      POSTGRES_USER: mogul
+      POSTGRES_PASSWORD: mogul
+    ports:
+      - "5432:5432"
+    volumes:
+      - mogul_pgdata:/var/lib/postgresql/data
+      - ./drizzle/0001_initial.sql:/docker-entrypoint-initdb.d/001_initial.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mogul -d mogul"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in your local environment}
+      AUTH_TRUST_HOST: "true"
+      DATABASE_URL: postgres://mogul:mogul@postgres:5432/mogul
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_CHAT_MODEL: ${OPENAI_CHAT_MODEL:-gpt-4.1-mini}
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      OPENAI_RERANK_MODEL: ${OPENAI_RERANK_MODEL:-gpt-4.1-mini}
+      OPENAI_TTS_MODEL: ${OPENAI_TTS_MODEL:-gpt-4o-mini-tts}
+      OPENAI_TTS_VOICE: ${OPENAI_TTS_VOICE:-marin}
+      DEMO_MODE: ${DEMO_MODE:-true}
+      DEMO_USER_EMAIL: ${DEMO_USER_EMAIL:-investor@mogul.local}
+      DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD:-ChangeThisDemoPassword!2026}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-4}
+    ports:
+      - "3000:3000"
+
+volumes:
+  mogul_pgdata:

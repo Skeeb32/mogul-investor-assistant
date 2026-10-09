@@ -1,8 +1,12 @@
 node_modules/
 .DS_Store
+AGENTS.md
 .env
 .env.*
 !.env.example
 coverage/
 dist/
 sources/
+.next/
+tsconfig.tsbuildinfo
+drizzle/meta/
