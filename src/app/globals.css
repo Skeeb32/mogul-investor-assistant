@@ -159,9 +159,14 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visib
 .sign-in-form { display: flex; flex-direction: column; gap: 14px; }
 .sign-in-form label { display: flex; flex-direction: column; gap: 6px; color: #657168; font-size: 9px; font-weight: 600; }
 .sign-in-form input { height: 39px; border: 1px solid #dfe4dc; border-radius: 4px; padding: 0 11px; background: white; color: #26332b; font-size: 10px; }
-.sign-in-submit { margin-top: 3px; min-height: 39px; border: 0; border-radius: 4px; background: #314b39; color: white; font-size: 10px; font-weight: 600; }
+.sign-in-submit { margin-top: 3px; width: 100%; min-height: 39px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 4px; background: #314b39; color: white; font-size: 10px; font-weight: 600; text-align: center; }
 .sign-in-submit:disabled { opacity: .65; }
 .sign-in-error { border: 1px solid #ead6cb; background: #fbf4ef; border-radius: 4px; padding: 9px; color: #8a5b47; font-size: 9px; }
+.sign-in-success { border: 1px solid #dbe7d9; background: #f1f6ef; border-radius: 4px; padding: 9px; color: #49644d; font-size: 9px; }
+.auth-switch { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px; color: #7c877e; font-size: 9px; margin-top: 18px; }
+.auth-switch a { display: inline-flex; align-items: center; gap: 5px; color: #405d47; font-weight: 650; }
+.auth-switch a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sign-up-card>p.sign-in-security { margin: 15px 0 0; }
 .sign-in-demo { padding: 11px; border-radius: 5px; background: #f0f3ed; color: #748176; font-size: 9px; line-height: 1.5; margin-top: 16px; }
 .sign-in-security { color: #9ba39c; font-size: 8px; margin-top: 15px; line-height: 1.55; }
 .upload-dialog { border: 1px solid #e3e8e0; border-radius: 8px; padding: 23px; width: min(470px, calc(100vw - 28px)); background: #fcfcf9; color: var(--ink); box-shadow: 0 22px 80px rgba(30,42,32,.24); }

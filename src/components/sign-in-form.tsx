@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { ArrowRight, Home, ShieldCheck } from "lucide-react";
 
-export function SignInForm({ demoMode }: { demoMode: boolean }) {
+export function SignInForm({ demoMode, accountCreated }: { demoMode: boolean; accountCreated: boolean }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,11 +43,16 @@ export function SignInForm({ demoMode }: { demoMode: boolean }) {
         <h2>Welcome back</h2>
         <p>Sign in to continue to your investor assistant.</p>
         <form className="sign-in-form" onSubmit={submit}>
+          {accountCreated && <div className="sign-in-success" role="status">Your account is ready. Sign in to continue.</div>}
           <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required /></label>
           <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></label>
           {error && <div className="sign-in-error" role="alert">{error}</div>}
-          <button className="sign-in-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : <>Sign in <ArrowRight size={13} style={{ verticalAlign: "middle", marginLeft: 6 }} /></>}</button>
+          <button className="sign-in-submit" type="submit" disabled={busy}>
+            <span>{busy ? "Signing in…" : "Sign in"}</span>
+            {!busy && <ArrowRight size={14} aria-hidden="true" />}
+          </button>
         </form>
+        <div className="auth-switch">New to Mogul? <Link href="/sign-up">Create an account <ArrowRight size={12} aria-hidden="true" /></Link></div>
         {demoMode && <div className="sign-in-demo">Demo mode is enabled. Seed the sample investor account with the values in your local <code>.env</code> file.</div>}
         <p className="sign-in-security">This prototype uses account-scoped data and role checks. Never share your password or API keys.</p>
       </section>

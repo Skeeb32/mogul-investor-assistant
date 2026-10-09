@@ -94,7 +94,7 @@ Optional flags are `--property <property-uuid>`, `--date YYYY-MM-DD`, and `--url
 
 1. Provision PostgreSQL with pgvector and apply `drizzle/0001_initial.sql` (or run `npm run db:migrate` from a trusted release environment). Use a pooled connection string for the serverless runtime where your provider offers one.
 2. Import the repository into Vercel and configure the environment variables above. Set a unique `AUTH_SECRET`, production database URL, and OpenAI key. Set `DEMO_MODE=false` after deciding whether you want synthetic data.
-3. Deploy. Provision real user accounts through a controlled administrative process; public self-signup and password recovery are not implemented.
+3. Deploy. Investors can create an individual account from `/sign-up`; each account starts with an empty, isolated portfolio. Email verification and password recovery are not implemented yet, so keep access limited while evaluating the demo.
 4. For browser speech recognition, use a supported browser and a secure origin. Hosted speech playback is provided by OpenAI.
 
 Vercel functions have deployment-specific execution and request limits. Confirm your plan's limits against document ingestion and database connection settings; use a background worker for larger ingestion workloads.
@@ -109,7 +109,7 @@ Follow [`docs/live-preview-checklist.md`](docs/live-preview-checklist.md) to con
 - Row-level security uses transaction-local identity settings. The runtime database role must not own protected tables or have `BYPASSRLS`; use a separate privileged migration role.
 - Document uploads are restricted by role, file type, size, and same-origin checks. URL inputs must use HTTPS.
 - Chat, speech, document changes, and sensitive tool actions are rate limited or audited.
-- Demo data is fictional. There is no live Mogul platform integration, real-time property feed, payment flow, multi-factor authentication, account recovery, or user self-registration.
+- Demo data is fictional. There is no live Mogul platform integration, real-time property feed, payment flow, multi-factor authentication, email verification, or password recovery. Public investor self-registration creates an empty account with no portfolio data.
 - Add monitoring, backups, secret rotation, account provisioning, retention rules, abuse controls, and a security review before production use.
 
 ## Quality checks
