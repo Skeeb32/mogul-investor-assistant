@@ -35,6 +35,8 @@ services:
       DEMO_MODE: ${DEMO_MODE:-true}
       DEMO_USER_EMAIL: ${DEMO_USER_EMAIL:-investor@mogul.local}
       DEMO_USER_PASSWORD: ${DEMO_USER_PASSWORD:-ChangeThisDemoPassword!2026}
+      DEMO_SECOND_USER_EMAIL: ${DEMO_SECOND_USER_EMAIL:-investor2@mogul.local}
+      DEMO_SECOND_USER_PASSWORD: ${DEMO_SECOND_USER_PASSWORD:-ChangeThisSecondDemoPassword!2026}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-4}
     ports:
       - "3000:3000"
