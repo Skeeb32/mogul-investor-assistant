@@ -1,7 +1,7 @@
 export type TextChunk = { content: string; index: number; count: number };
 
 export function splitIntoChunks(input: string, chunkWords = 240, overlapWords = 40): TextChunk[] {
-  const normalized = input.replace(/\u0000/g, "").replace(/\s+/g, " ").trim();
+  const normalized = input.split("\u0000").join("").replace(/\s+/g, " ").trim();
   if (!normalized) return [];
   const words = normalized.split(" ");
   const chunks: string[] = [];
@@ -15,5 +15,5 @@ export function splitIntoChunks(input: string, chunkWords = 240, overlapWords = 
 }
 
 export function normalizeDocumentText(input: string) {
-  return input.replace(/\u0000/g, "").replace(/\r\n?/g, "\n").replace(/[\t ]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+  return input.split("\u0000").join("").replace(/\r\n?/g, "\n").replace(/[\t ]+/g, " ").replace(/\n{3,}/g, "\n\n").trim();
 }

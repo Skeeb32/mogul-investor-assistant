@@ -1,6 +1,7 @@
 import { parse as parseCsv } from "csv-parse/sync";
 import { load } from "cheerio";
-import mammoth from "mammoth";
+import { XMLParser, XMLValidator } from "fast-xml-parser";
+import { strFromU8, unzipSync } from "fflate";
 import { PDFParse } from "pdf-parse";
 import { normalizeDocumentText } from "./chunking";
 
@@ -31,7 +32,21 @@ export async function extractDocumentText(buffer: Buffer, type: string) {
       await parser.destroy();
     }
   } else if (type === "docx") {
-    text = (await mammoth.extractRawText({ buffer })).value;
+    const archive = unzipSync(new Uint8Array(buffer), {
+      filter: (entry) => entry.name === "word/document.xml" && entry.originalSize <= 10_000_000,
+    });
+    const documentXml = archive["word/document.xml"];
+    if (!documentXml) throw new Error("The DOCX document is invalid or its main text exceeds the 10 MB extraction limit.");
+    const xml = strFromU8(documentXml);
+    const validation = XMLValidator.validate(xml);
+    if (validation !== true) throw new Error("The DOCX document contains invalid XML.");
+    const tree = new XMLParser({
+      ignoreAttributes: true,
+      parseTagValue: false,
+      preserveOrder: true,
+      trimValues: false,
+    }).parse(xml);
+    text = extractXmlText(tree);
   } else if (type === "html") {
     text = load(buffer.toString("utf8"))("body").text();
   } else if (type === "csv") {
@@ -45,4 +60,18 @@ export async function extractDocumentText(buffer: Buffer, type: string) {
   const normalized = normalizeDocumentText(text);
   if (normalized.length < 20) throw new Error("No readable text was found in this file.");
   return normalized;
+}
+
+function extractXmlText(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (Array.isArray(value)) return value.map(extractXmlText).join("");
+  if (value && typeof value === "object") {
+    return Object.entries(value).map(([key, child]) => {
+      if (key === "#text" || key === "__cdata") return typeof child === "string" ? child : "";
+      if (key.endsWith(":br")) return "\n";
+      if (key.endsWith(":tab")) return "\t";
+      return extractXmlText(child);
+    }).join("");
+  }
+  return "";
 }

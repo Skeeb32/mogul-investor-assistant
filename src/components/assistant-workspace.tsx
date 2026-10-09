@@ -28,14 +28,18 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
     try {
       const response = await fetch("/api/conversations", { cache: "no-store" });
       if (response.ok) setConversations(await response.json() as ConversationSummary[]);
-    } catch {}
+    } catch {
+      // Keep the dashboard available if this refresh cannot reach the API.
+    }
   }, []);
 
   const refreshOverview = useCallback(async () => {
     try {
       const response = await fetch("/api/overview", { cache: "no-store" });
       if (response.ok) setOverview(await response.json() as DashboardOverview);
-    } catch {}
+    } catch {
+      // Keep the last server-rendered portfolio summary on refresh errors.
+    }
   }, []);
 
   useEffect(() => {

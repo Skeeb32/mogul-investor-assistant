@@ -61,7 +61,9 @@ export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConve
   }, [id, setMessages]);
 
   useEffect(() => () => {
-    try { audioSourceRef.current?.stop(); } catch {}
+    try { audioSourceRef.current?.stop(); } catch {
+      // The source may have ended between render and unmount.
+    }
     void audioContextRef.current?.close();
   }, []);
 
@@ -117,7 +119,9 @@ export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConve
   }
 
   function stopAudio() {
-    try { audioSourceRef.current?.stop(); } catch {}
+    try { audioSourceRef.current?.stop(); } catch {
+      // The source may have ended before the stop request.
+    }
     audioSourceRef.current = null;
   }
 
@@ -135,7 +139,6 @@ export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConve
     if (!promptToSend || status !== "ready") return;
     // This effect bridges a prompt request from the separate context panel into the active chat.
     onPromptSent();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void submitText(promptToSend);
   }, [onPromptSent, promptToSend, status, submitText]);
 
