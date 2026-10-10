@@ -1,11 +1,11 @@
 "use client";
 
-import type { FormEvent } from "react";
+import type { FormEvent, RefObject } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { UIMessage } from "ai";
-import { ArrowUp, Paperclip, Square } from "lucide-react";
+import { ArrowUp, Paperclip, Square, X } from "lucide-react";
 import { MessageList } from "@/components/message-list";
 import { VoiceControls } from "@/components/voice-controls";
 
@@ -18,13 +18,15 @@ type Props = {
   onToast: (message: string) => void;
   promptToSend: string;
   onPromptSent: () => void;
+  onClose?: () => void;
+  closeButtonRef?: RefObject<HTMLButtonElement | null>;
 };
 
 function getText(message: UIMessage) {
   return message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");
 }
 
-export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConversationUpdate, onUpload, onToast, promptToSend, onPromptSent }: Props) {
+export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConversationUpdate, onUpload, onToast, promptToSend, onPromptSent, onClose, closeButtonRef }: Props) {
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
@@ -139,8 +141,12 @@ export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConve
     if (!promptToSend || status !== "ready") return;
     // This effect bridges a prompt request from the separate context panel into the active chat.
     onPromptSent();
+    if (!openAiConfigured) {
+      onToast("Add OPENAI_API_KEY to the server environment to start a conversation.");
+      return;
+    }
     void submitText(promptToSend);
-  }, [onPromptSent, promptToSend, status, submitText]);
+  }, [onPromptSent, onToast, openAiConfigured, promptToSend, status, submitText]);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -161,11 +167,14 @@ export function ChatPanel({ conversationId, openAiConfigured, canUpload, onConve
     <section className="chat-card" aria-label="Mogul assistant chat">
       <header className="chat-heading">
         <div><h2>Ask Mogul</h2><p>Portfolio answers from your account · property answers from your documents</p></div>
-        <span className="assistant-status"><i />{openAiConfigured ? "Ready to help" : "Setup needed"}</span>
+        <div className="chat-heading-actions">
+          <span className="assistant-status"><i />{openAiConfigured ? "Ready to help" : "Setup needed"}</span>
+          {onClose && <button ref={closeButtonRef} className="chat-close" type="button" onClick={onClose} aria-label="Close Mogul assistant"><X /></button>}
+        </div>
       </header>
       <MessageList messages={messages} busy={busy} onSuggestion={(suggestion) => void submitText(suggestion)} />
       {error && <div className="chat-error" role="alert">{error.message}</div>}
-      {!openAiConfigured && <div className="chat-error" role="status">The chat is ready once <code>OPENAI_API_KEY</code> is set in your local environment.</div>}
+      {!openAiConfigured && <div className="chat-error" role="status">Add <code>OPENAI_API_KEY</code> to your server environment (local <code>.env.local</code> or Vercel project settings) to enable chat.</div>}
       <div className="composer-wrap">
         <VoiceControls
           audioEnabled={audioEnabled}
