@@ -21,6 +21,10 @@ A demo-first real estate investor assistant with an authenticated portfolio dash
 
 Chat and sample account pages can run without an OpenAI key; AI answers and voice output require one. Document indexing works without a key using full-text search only, but the demo seed skips embeddings without a key.
 
+## Configure OpenAI for Vercel
+
+The OpenAI key must remain a server-side secret. In the Vercel project, add `OPENAI_API_KEY` under **Settings → Environment Variables**, set its value as a Secret, and select the Preview and/or Production environments where the assistant should work. Redeploy that environment after saving the variable. Do not add the key to a `NEXT_PUBLIC_` variable, source file, or Git commit.
+
 ## Local setup
 
 1. Copy `.env.example` to `.env.local`.
