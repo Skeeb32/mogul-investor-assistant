@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Bot, Menu } from "lucide-react";
 import { AppSidebar, type ConversationSummary } from "@/components/app-sidebar";
-import { ChatPanel } from "@/components/chat-panel";
+import { AssistantChatWidget } from "@/components/assistant-chat-widget";
 import { ContextPanel, MetricSummary, type DashboardOverview } from "@/components/context-panel";
 import { DocumentUploader } from "@/components/document-uploader";
 
@@ -19,6 +19,7 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
   const [conversationId, setConversationId] = useState(initialConversationId);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [queuedPrompt, setQueuedPrompt] = useState("");
   const [toast, setToast] = useState("");
@@ -64,14 +65,20 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
   function newConversation() {
     setConversationId(window.crypto.randomUUID());
     setSidebarOpen(false);
+    setChatOpen(true);
   }
 
   function selectConversation(id: string) {
     setConversationId(id);
     setSidebarOpen(false);
+    setChatOpen(true);
   }
 
   function navigate(section: string) {
+    if (section === "Assistant") {
+      setChatOpen(true);
+      return;
+    }
     if (section === "Documents" && canUpload) {
       setUploadOpen(true);
       return;
@@ -86,7 +93,7 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
 
   function requestPrompt(prompt: string) {
     setQueuedPrompt(prompt);
-    document.querySelector(".chat-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setChatOpen(true);
   }
 
   return (
@@ -121,17 +128,6 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
           <MetricSummary overview={overview} />
 
           <section className="content-layout">
-            <ChatPanel
-              key={conversationId}
-              conversationId={conversationId}
-              openAiConfigured={openAiConfigured}
-              canUpload={canUpload}
-              onConversationUpdate={() => { void refreshConversations(); }}
-              onUpload={() => setUploadOpen(true)}
-              onToast={setToast}
-              promptToSend={queuedPrompt}
-              onPromptSent={() => setQueuedPrompt("")}
-            />
             <ContextPanel overview={overview} onAsk={requestPrompt} />
           </section>
 
@@ -146,6 +142,20 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
         overview={overview}
         onClose={() => setUploadOpen(false)}
         onComplete={(message) => { setToast(message); void refreshOverview(); }}
+      />
+      <AssistantChatWidget
+        key={conversationId}
+        open={chatOpen}
+        onOpen={() => setChatOpen(true)}
+        onClose={() => setChatOpen(false)}
+        conversationId={conversationId}
+        openAiConfigured={openAiConfigured}
+        canUpload={canUpload}
+        onConversationUpdate={() => { void refreshConversations(); }}
+        onUpload={() => setUploadOpen(true)}
+        onToast={setToast}
+        promptToSend={queuedPrompt}
+        onPromptSent={() => setQueuedPrompt("")}
       />
       <div className={toast ? "toast show" : "toast"} role="status" aria-live="polite"><Bot size={13} style={{ verticalAlign: "middle", marginRight: 6 }} />{toast}</div>
     </div>
