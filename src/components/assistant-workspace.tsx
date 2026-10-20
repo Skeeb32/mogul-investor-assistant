@@ -6,6 +6,7 @@ import { AppSidebar, type ConversationSummary } from "@/components/app-sidebar";
 import { ChatPanel } from "@/components/chat-panel";
 import { ContextPanel, MetricSummary, type DashboardOverview } from "@/components/context-panel";
 import { DocumentUploader } from "@/components/document-uploader";
+import { PropertyMarket } from "@/components/property-market";
 
 type IdentityView = { name: string; email: string; role: "investor" | "analyst" | "admin" };
 
@@ -22,6 +23,7 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
   const [uploadOpen, setUploadOpen] = useState(false);
   const [queuedPrompt, setQueuedPrompt] = useState("");
   const [toast, setToast] = useState("");
+  const [selectedSection, setSelectedSection] = useState("Assistant");
   const canUpload = identity.role === "analyst" || identity.role === "admin";
 
   const refreshConversations = useCallback(async () => {
@@ -62,23 +64,27 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
   }, [toast]);
 
   function newConversation() {
+    setSelectedSection("Assistant");
     setConversationId(window.crypto.randomUUID());
     setSidebarOpen(false);
   }
 
   function selectConversation(id: string) {
+    setSelectedSection("Assistant");
     setConversationId(id);
     setSidebarOpen(false);
   }
 
   function navigate(section: string) {
+    setSelectedSection(section);
     if (section === "Documents" && canUpload) {
       setUploadOpen(true);
       return;
     }
-    if (section === "Properties" || section === "Portfolio") {
+    if (section === "Properties") return;
+    if (section === "Portfolio") {
       document.querySelector(".context-column")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      setToast(section === "Portfolio" ? "Your portfolio summary is shown beside the conversation." : "Your property holdings are shown beside the conversation.");
+      setToast("Your portfolio summary is shown beside the conversation.");
       return;
     }
     if (section !== "Assistant") setToast(section + " is available through your investor assistant.");
@@ -105,11 +111,12 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
       <main className="main-content">
         <header className="topbar">
           <button className="mobile-menu" aria-label="Open navigation" onClick={() => setSidebarOpen(true)}><Menu size={18} /></button>
-          <div className="breadcrumbs"><span>Investor portal</span><span> / </span><b>Assistant</b></div>
+          <div className="breadcrumbs"><span>Investor portal</span><span> / </span><b>{selectedSection}</b></div>
           <div className="top-actions"><span className="market-status"><i />Account data protected</span><span className="top-avatar">{identity.name.split(" ").map((part) => part[0]).slice(0, 2).join("").toUpperCase()}</span></div>
         </header>
 
         <div className="page-wrap">
+          {selectedSection === "Properties" ? <PropertyMarket onToast={setToast} /> : <>
           <section className="welcome-row">
             <div>
               <div className="eyebrow">YOUR MOGUL ACCOUNT <span className="demo-chip"><i />SAMPLE DATA</span></div>
@@ -139,6 +146,7 @@ export function AssistantWorkspace({ identity, overview: initialOverview, initia
             <span>Sample investor environment · All account, property, and market figures are synthetic.</span>
             <div className="footer-links"><span>Assistant answers are informational, not investment, tax, or legal advice.</span></div>
           </footer>
+          </>}
         </div>
       </main>
       <DocumentUploader
