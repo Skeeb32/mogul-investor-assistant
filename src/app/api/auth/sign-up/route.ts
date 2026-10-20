@@ -21,11 +21,38 @@ function hasUniqueConstraintError(error: unknown) {
 
 function logSignUpFailure(stage: string, error?: unknown) {
   const details: Record<string, string> = { stage };
-  if (typeof error === "object" && error !== null) {
-    if ("name" in error && typeof error.name === "string") details.errorName = error.name;
-    if ("code" in error && typeof error.code === "string") details.databaseCode = error.code;
+  let current: unknown = error;
+  for (let depth = 0; depth < 4 && typeof current === "object" && current !== null; depth += 1) {
+    if (depth === 0 && "name" in current && typeof current.name === "string") {
+      details.errorName = current.name;
+    } else if (depth > 0 && "name" in current && typeof current.name === "string" && !details.causeName) {
+      details.causeName = current.name;
+    }
+    if ("code" in current && typeof current.code === "string" && !details.databaseCode) {
+      details.databaseCode = current.code;
+    }
+    if ("message" in current && typeof current.message === "string" && !details.databaseErrorCategory) {
+      const message = current.message.toLowerCase();
+      if (/timeout|timed out|connection refused|connection terminated|socket|network/.test(message)) {
+        details.databaseErrorCategory = "connection";
+      } else if (/password authentication|authentication failed|invalid authorization/.test(message)) {
+        details.databaseErrorCategory = "authentication";
+      } else if (/permission denied|row-level security|not authorized/.test(message)) {
+        details.databaseErrorCategory = "permission";
+      } else if (/relation .* does not exist|table .* does not exist/.test(message)) {
+        details.databaseErrorCategory = "missing-table";
+      } else if (/column .* does not exist/.test(message)) {
+        details.databaseErrorCategory = "missing-column";
+      } else if (/violates .* constraint|duplicate key/.test(message)) {
+        details.databaseErrorCategory = "constraint";
+      } else {
+        details.databaseErrorCategory = "other";
+      }
+    }
+    current = "cause" in current ? current.cause : undefined;
   }
-  // Do not log request fields, passwords, secrets, SQL, or raw error messages.
+  // Log only error class, PostgreSQL code, and a coarse category. Never log request fields,
+  // passwords, secrets, database URLs, SQL, or raw error messages.
   console.error("mogul_signup_failure", details);
 }
 
