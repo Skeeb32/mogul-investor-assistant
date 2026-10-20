@@ -19,6 +19,16 @@ function hasUniqueConstraintError(error: unknown) {
   return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
 }
 
+function logSignUpFailure(stage: string, error?: unknown) {
+  const details: Record<string, string> = { stage };
+  if (typeof error === "object" && error !== null) {
+    if ("name" in error && typeof error.name === "string") details.errorName = error.name;
+    if ("code" in error && typeof error.code === "string") details.databaseCode = error.code;
+  }
+  // Do not log request fields, passwords, secrets, SQL, or raw error messages.
+  console.error("mogul_signup_failure", details);
+}
+
 export async function POST(request: Request) {
   const originError = requireSameOrigin(request);
   if (originError) return originError;
@@ -44,6 +54,7 @@ export async function POST(request: Request) {
 
   const secret = process.env.AUTH_SECRET;
   if (!secret) {
+    logSignUpFailure("auth-secret-missing");
     return NextResponse.json({ error: "Account creation is temporarily unavailable." }, { status: 503 });
   }
 
@@ -55,6 +66,7 @@ export async function POST(request: Request) {
     if (error instanceof RateLimitError) {
       return NextResponse.json({ error: "Too many sign-up attempts. Please wait and try again." }, { status: 429 });
     }
+    logSignUpFailure("rate-limit-database", error);
     return NextResponse.json({ error: "Account creation is temporarily unavailable." }, { status: 503 });
   }
 
@@ -86,6 +98,7 @@ export async function POST(request: Request) {
     if (hasUniqueConstraintError(error)) {
       return NextResponse.json({ error: "An account could not be created with those details. If you already have an account, sign in instead." }, { status: 409 });
     }
+    logSignUpFailure("account-database-transaction", error);
     return NextResponse.json({ error: "Account creation is temporarily unavailable." }, { status: 503 });
   }
 }
